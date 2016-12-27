@@ -28,6 +28,9 @@ services:
       - 9080:8080
       
   ### MONBOX
+  #### Consult your user specific profile credentials file (i.e., ~/.aws/credentials); 
+  #### Uncomment and supply values for accessKey and secretKey environment variables below
+  #### @see http://cloud.spring.io/spring-cloud-static/spring-cloud-aws/1.1.3.RELEASE/#_sdk_credentials_configuration
   monbox:
     image: fastnsilver/monbox
     cpu_shares: 40
@@ -35,6 +38,8 @@ services:
     ports:
       - 80:8080
     environment:
+      #- CLOUD_AWS_CREDENTIALS_ACCESSKEY=
+      #- CLOUD_AWS_CREDENTIALS_SECRETKEY=
       - SPRING_REDIS_HOST=redis
       - DOCKER_IP=$DOCKER_IP
       - JAVA_OPTS=-Xmx512m -XX:+UseG1GC -XX:+UseStringDeduplication

@@ -6,10 +6,12 @@ This is a [Spring Boot](http://projects.spring.io/spring-boot/) application.
 
 ## Prerequisites
 
+* An [AWS](https://aws.amazon.com) account. You may follow instructions to create one [here](http://docs.aws.amazon.com/AmazonSimpleDB/latest/DeveloperGuide/AboutAWSAccounts.html).
+* [aws-cli](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) 1.11.34 or better
 * [Docker Toolbox](http://docs.docker.com/mac/started/); or `docker`, `docker-machine` and `docker-compose` are required
 * Java [JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) 1.8.0_112 or better
 * [Maven](https://maven.apache.org/download.cgi) 3.3.9 or better
-* [aws-cli](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) 1.11.34 or better
+
 
 ## Prepare AWS CLI
 

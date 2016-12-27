@@ -18,19 +18,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import com.amazonaws.auth.AWSCredentialsProviderChain;
-import com.amazonaws.auth.InstanceProfileCredentialsProvider;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.autoscaling.AmazonAutoScaling;
-import com.amazonaws.services.autoscaling.AmazonAutoScalingClient;
 import com.amazonaws.services.autoscaling.model.AutoScalingInstanceDetails;
 import com.amazonaws.services.autoscaling.model.DescribeAutoScalingInstancesResult;
-import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
+import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 import com.amazonaws.services.cloudwatch.model.Datapoint;
 import com.amazonaws.services.cloudwatch.model.Dimension;
 import com.amazonaws.services.cloudwatch.model.GetMetricStatisticsRequest;
 import com.amazonaws.services.cloudwatch.model.GetMetricStatisticsResult;
-import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.DescribeVolumesResult;
 import com.amazonaws.services.ec2.model.GroupIdentifier;
@@ -58,17 +54,17 @@ public class DefaultAWSCloudClient implements AWSCloudClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(AWSCloudCollectorTask.class);
     private static final long ONE_DAY_MILLI_SECOND = TimeUnit.DAYS.toMillis(1);
     private final AWSCloudSettings settings;
-    private static AmazonEC2Client ec2Client;
-    private static AmazonCloudWatchClient cloudWatchClient;
-    private static AmazonAutoScaling autoScalingClient;
+    private AmazonEC2 ec2Client;
+    private AmazonCloudWatch cloudWatchClient;
+    private AmazonAutoScaling autoScalingClient;
     private static final String NO_ACCOUNT = "NOACCOUNT";
-
-
-    @Autowired
-    public DefaultAWSCloudClient(AWSCloudSettings settings) {
+    
+    public DefaultAWSCloudClient(@Autowired AWSCloudSettings settings, 
+    		@Autowired(required=false) AmazonEC2 ec2Client, 
+    		@Autowired(required=false) AmazonCloudWatch cloudWatchClient, 
+    		@Autowired(required=false) AmazonAutoScaling autoScalingClient) {
         this.settings = settings;
     }
-
 
     @PostConstruct
     public final void setClients() {
@@ -77,14 +73,6 @@ public class DefaultAWSCloudClient implements AWSCloudClient {
         System.getProperties().put("https.proxyHost", settings.getProxyHost());
         System.getProperties().put("https.proxyPort", settings.getProxyPort());
         System.getProperties().put("http.nonProxyHosts", settings.getNonProxy());
-
-        ec2Client = new AmazonEC2Client(new AWSCredentialsProviderChain(new InstanceProfileCredentialsProvider(),
-                new ProfileCredentialsProvider(settings.getProfile())));
-
-        cloudWatchClient = new AmazonCloudWatchClient(new AWSCredentialsProviderChain(new InstanceProfileCredentialsProvider(),
-                new ProfileCredentialsProvider(settings.getProfile())));
-        autoScalingClient = new AmazonAutoScalingClient(new AWSCredentialsProviderChain(new InstanceProfileCredentialsProvider(),
-                new ProfileCredentialsProvider(settings.getProfile())));
     }
 
     /**
@@ -472,15 +460,4 @@ public class DefaultAWSCloudClient implements AWSCloudClient {
         return null;
     }
 
-    public void setEc2Client(AmazonEC2Client ec2Client) {
-        DefaultAWSCloudClient.ec2Client = ec2Client;
-    }
-
-    public  void setCloudWatchClient(AmazonCloudWatchClient cloudWatchClient) {
-        DefaultAWSCloudClient.cloudWatchClient = cloudWatchClient;
-    }
-
-    public  void setAutoScalingClient(AmazonAutoScaling autoScalingClient) {
-        DefaultAWSCloudClient.autoScalingClient = autoScalingClient;
-    }
 }
