@@ -36,18 +36,50 @@ $ mvn clean install
 
 TBD
 
-## How to run
+## A few notes on Redis 
+
+This service interacts with a Redis instance.  Assumes instance is up-and-running at localhost (127.0.0.1). If you want to change that then you need to add the following argument (when attempting to run the service)
+
+```
+-Dspring.redis.host={redis.host}
+```
+
+where `{redis.host}` is the hostname or IP address of the Redis instance
+
+You could start an instance of Redis with Docker using
+
+```
+docker run -p6379:6379 -d redis:3.2.6-alpine
+```
+To get the IP address of the Docker host
+
+```
+docker-machine ip {machine.name}
+```
+
+where `{machine.name}` is name of the Docker machine.
+
+To tear down
+
+```
+docker ps
+docker kill {container.id}
+```
+
+where `{container.id}` is the id of the running Redis container.
+
+## How to Run
 
 ### with Spring Boot
 
 ```
-$ mvn spring-boot:run
+$ mvn spring-boot:run -Dspring.profiles.active=local -Djava.security.egd=file:/dev/./urandom
 ```
 
 ### with Java
 
 ```
-$ java -jar monbox-x.x.x.jar
+$ java -jar monbox-x.x.x.jar -Dspring.profiles.active=local -Djava.security.egd=file:/dev/./urandom
 ```
 
 ### with Docker

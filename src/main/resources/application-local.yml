@@ -1,0 +1,12 @@
+# Assumes a Redis instance is running on localhost
+# Uncomment spring.redis.host below and set value for hostname if this is not the case
+cloud:
+  aws:
+    credentials:
+      instanceProfile: false
+    region:
+      static: us-west-2 
+
+#spring:
+#  redis:
+#    host:
