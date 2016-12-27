@@ -59,11 +59,15 @@ public class DefaultAWSCloudClient implements AWSCloudClient {
     private AmazonAutoScaling autoScalingClient;
     private static final String NO_ACCOUNT = "NOACCOUNT";
     
-    public DefaultAWSCloudClient(@Autowired AWSCloudSettings settings, 
-    		@Autowired(required=false) AmazonEC2 ec2Client, 
-    		@Autowired(required=false) AmazonCloudWatch cloudWatchClient, 
-    		@Autowired(required=false) AmazonAutoScaling autoScalingClient) {
+    @Autowired
+    public DefaultAWSCloudClient(AWSCloudSettings settings, 
+    		AmazonEC2 ec2Client, 
+    		AmazonCloudWatch cloudWatchClient, 
+    		AmazonAutoScaling autoScalingClient) {
         this.settings = settings;
+        this.ec2Client = ec2Client;
+        this.cloudWatchClient = cloudWatchClient;
+        this.autoScalingClient = autoScalingClient;
     }
 
     @PostConstruct
@@ -131,8 +135,8 @@ public class DefaultAWSCloudClient implements AWSCloudClient {
      *
      * @param account      Cloud Account
      * @param currInstance Cloud Instance
-     * @param repository   CloundInstnceRepository
-     * @return A single CloundInstance
+     * @param repository   CloudInstanceRepository
+     * @return A single CloudInstance
      */
     private CloudInstance getCloudInstanceDetails(String account,
                                                   Instance currInstance, Map<String, String> autoScaleMap, CloudInstanceRepository repository) {

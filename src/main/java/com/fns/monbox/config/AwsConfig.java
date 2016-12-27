@@ -18,7 +18,7 @@ public class AwsConfig {
 	// @see https://github.com/spring-cloud/spring-cloud-aws/issues/28 to understand the purpose of this configuration
 	@Profile("local")
 	@Configuration
-	protected static class LocalBoostrap {
+	protected static class LocalBootstrap {
 		
 		@Bean
 		public AmazonEC2 ec2Client(AWSCredentialsProvider awsCredentialsProvider) {
