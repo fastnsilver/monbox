@@ -1,0 +1,15 @@
+# DOCKER COMPOSE CONFIGURATION
+# This file uses the version 2 docker-compose file format, described here:
+# https://docs.docker.com/compose/compose-file/#version-2
+
+version: '2'
+
+services:
+
+  springboot-fiesta:
+    image: fastnsilver/monbox-collector
+    ports:
+      - 80:8080
+    environment:
+      - DOCKER_IP=$DOCKER_IP
+      - JAVA_OPTS=-Xmx512m -XX:+UseG1GC -XX:+UseStringDeduplication

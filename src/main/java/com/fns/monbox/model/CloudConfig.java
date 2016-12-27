@@ -1,7 +1,5 @@
-package com.fns.monbox.config;
+package com.fns.monbox.model;
 
-import com.fns.monbox.model.CollectorItem;
-import com.fns.monbox.model.NameValue;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;

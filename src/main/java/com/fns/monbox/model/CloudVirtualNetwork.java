@@ -1,26 +1,26 @@
 package com.fns.monbox.model;
 
-import org.bson.types.ObjectId;
-import org.hibernate.validator.constraints.NotBlank;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
 
-@Document(collection = "cloud_virtual_network")
+import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
+
+
+@RedisHash("cloud_virtual_network")
 public class CloudVirtualNetwork extends BaseModel{
     @Indexed
-    @NotNull
+	@NotNull
     @NotBlank
     private String virtualNetworkId;
     @NotNull
     @NotBlank
     private String accountNumber;
-    private ObjectId collectorItemId;
+    private String collectorItemId;
     private String cidrBlock;
     private boolean defaultNetwork;
     private String state; //pending, available etc.
@@ -88,11 +88,11 @@ public class CloudVirtualNetwork extends BaseModel{
         this.accountNumber = accountNumber;
     }
 
-    public ObjectId getCollectorItemId() {
+    public String getCollectorItemId() {
         return collectorItemId;
     }
 
-    public void setCollectorItemId(ObjectId collectorItemId) {
+    public void setCollectorItemId(String collectorItemId) {
         this.collectorItemId = collectorItemId;
     }
 

@@ -2,15 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.fns</groupId>
-    <artifactId>monbox-collector</artifactId>
+    <artifactId>monbox</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>Montoring in a box, collector</name>
-    <description>Spring Boot enabled service that collects and publishes metrics to InfluxDB periodically about AWS compute resources.</description>
+    <name>Montoring in a box (for AWS)</name>
+    <description>Spring Boot enabled service that collects and publishes metrics to TSDB periodically about AWS compute resources.</description>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.2.RELEASE</version>
+        <version>1.4.3.RELEASE</version>
         <relativePath />
         <!-- lookup parent from repository -->
     </parent>
@@ -28,6 +28,10 @@
         <!-- This sample configuration should be adjusted depending on provider, this one is for Artifactory -->
         <docker.registryUrl>https://index.docker.io/v1/</docker.registryUrl>
 
+        <dropwizard-metrics.version>3.1.2</dropwizard-metrics.version>
+        <logbook-spring-boot-starter>1.0.1</logbook-spring-boot-starter>
+        <io-prometheus-simpleclient.version>0.0.18</io-prometheus-simpleclient.version>
+        
         <!-- Plugins -->
         <findbugs-maven-plugin.version>3.0.3</findbugs-maven-plugin.version>
         <jacoco-maven-plugin.version>0.7.8</jacoco-maven-plugin.version>
@@ -71,9 +75,14 @@
             <dependency>
               <groupId>com.amazonaws</groupId>
               <artifactId>aws-java-sdk-bom</artifactId>
-              <version>1.10.46</version>
+              <version>1.11.34</version>
               <type>pom</type>
               <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.21</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -120,50 +129,135 @@
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.timgroup</groupId>
             <artifactId>java-statsd-client</artifactId>
-            <version>3.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient</artifactId>
+            <version>${io-prometheus-simpleclient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_common</artifactId>
+            <version>${io-prometheus-simpleclient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_dropwizard</artifactId>
+            <version>${io-prometheus-simpleclient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_hotspot</artifactId>
+            <version>${io-prometheus-simpleclient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jolokia</groupId>
+            <artifactId>jolokia-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.querydsl</groupId>
-            <artifactId>querydsl-core</artifactId>
-            <version>4.1.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
+        </dependency>
+        <dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-redis</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-servlet</artifactId>
+            <version>${dropwizard-metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-jvm</artifactId>
-            <version>3.1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-batch</artifactId>
+            <version>${dropwizard-metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <!-- logbook: https://github.com/zalando/logbook -->
+        <dependency>
+            <groupId>org.zalando</groupId>
+            <artifactId>logbook-spring-boot-starter</artifactId>
+            <version>${logbook-spring-boot-starter}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-remote-shell</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.github.kstyrc</groupId>
+            <artifactId>embedded-redis</artifactId>
+            <version>0.6</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -172,63 +266,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>com.github.joelittlejohn.embedmongo</groupId>
-                <artifactId>embedmongo-maven-plugin</artifactId>
-                <version>0.3.4</version>
                 <executions>
                     <execution>
-                        <id>start</id>
                         <goals>
-                            <goal>start</goal>
+                            <goal>repackage</goal>
                         </goals>
                         <configuration>
-                            <port>27017</port>
-                            <!-- optional, default 27017 -->
-                            <randomPort>true</randomPort>
-                            <!-- optional, default is false, if true allocates a random port and overrides embedmongo.port -->
-                            <version>2.2.1</version>
-                            <!-- optional, default 2.2.1 -->
-                            <!--<databaseDirectory>/tmp/mongotest</databaseDirectory>-->
-                            <!-- optional, default is a new dir in java.io.tmpdir -->
-                            <logging>console</logging>
-                            <!-- optional (file|console|none), default console -->
-                            <!--<logFile>${project.build.directory}/embedded-mongo.log</logFile>-->
-                            <!-- optional, can be used when logging=file, default is ./embedmongo.log -->
-                            <!--<logFileEncoding>utf-8</logFileEncoding>-->
-                            <!-- optional, can be used when logging=file, default is utf-8 -->
-                            <bindIp>127.0.0.1</bindIp>
-                            <!-- optional, default is to listen on all interfaces -->
-                            <downloadPath>http://fastdl.mongodb.org/</downloadPath>
-                            <!-- optional, default is http://fastdl.mongodb.org/ -->
-                            <storageEngine>wiredTiger</storageEngine>
-                            <!--optional, one of wiredTiger or mmapv1 (default is mmapv1) -->
-                            <skip>false</skip>
-                            <!-- optional, skips this plugin entirely, use on the command line like -Dembedmongo.skip -->
+                            <classifier>exec</classifier>
                         </configuration>
-                    </execution>
-                    <execution>
-                        <id>mongo-scripts</id>
-                        <goals>
-                            <goal>mongo-scripts</goal>
-                        </goals>
-                        <configuration>
-                            <version>2.2.1</version>
-                            <!-- optional, default 2.2.1 -->
-                            <scriptsDirectory>${project.build.directory}/scripts/mongo</scriptsDirectory>
-                            <!-- a directory containing scripts to run -->
-                            <scriptCharsetEncoding>UTF-8</scriptCharsetEncoding>
-                            <!-- optional, valid charset encoding for loading the scripts. Uses the underlying charset encoding of the platform if not assigned -->
-                            <databaseName>monbox</databaseName>
-                            <!-- the name of the database to run scripts against -->
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>stop</id>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -289,9 +334,12 @@
                                    <include>${project.artifactId}-${project.version}-exec.jar</include>
                                </resource>
                            </resources>
+                           <!-- TODO: Uncomment when we identify Artifactory creds within T-Mobile -->
+                           <!--
                            <useConfigFile>true</useConfigFile>
                            <serverId>${docker.serverId}</serverId>
                            <registryUrl>${docker.registryUrl}</registryUrl>
+                           -->
                        </configuration>
                        <executions>
                            <execution>

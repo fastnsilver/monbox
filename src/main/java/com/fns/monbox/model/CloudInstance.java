@@ -1,20 +1,19 @@
 package com.fns.monbox.model;
 
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
+
 /**
  * Represents an EC2 instance from AWS
  */
-@Document(collection = "cloud_instance")
+@RedisHash("cloud_instance")
 public class CloudInstance extends BaseModel{
     @Indexed
-    private String instanceId;
-
+	private String instanceId;
     @Indexed
     private String accountNumber;
     private String instanceType;

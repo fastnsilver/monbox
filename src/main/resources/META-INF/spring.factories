@@ -1,0 +1,2 @@
+org.springframework.boot.actuate.autoconfigure.ManagementContextConfiguration=\
+com.fns.monbox.metrics.PrometheusEndpointContextConfiguration

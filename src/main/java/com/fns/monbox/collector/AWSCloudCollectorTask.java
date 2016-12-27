@@ -1,6 +1,6 @@
 package com.fns.monbox.collector;
 
-import com.fns.monbox.config.CloudConfig;
+import com.fns.monbox.model.CloudConfig;
 import com.fns.monbox.model.CloudInstance;
 import com.fns.monbox.model.CloudInstanceHistory;
 import com.fns.monbox.model.CloudSubNetwork;
