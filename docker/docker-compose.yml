@@ -40,6 +40,8 @@ services:
     environment:
       #- CLOUD_AWS_CREDENTIALS_ACCESSKEY=
       #- CLOUD_AWS_CREDENTIALS_SECRETKEY=
+      - CLOUD_AWS_REGION_STATIC=us-west-2
+      - SPRING_PROFILES_ACTIVE=local
       - SPRING_REDIS_HOST=redis
       - DOCKER_IP=$DOCKER_IP
       - JAVA_OPTS=-Xmx512m -XX:+UseG1GC -XX:+UseStringDeduplication
