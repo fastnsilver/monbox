@@ -35,11 +35,15 @@ services:
     image: fastnsilver/monbox
     cpu_shares: 40
     mem_limit: 512m
+    volumes:
+      - $HOME/.aws/:/.aws/
     ports:
       - 80:8080
     environment:
       #- CLOUD_AWS_CREDENTIALS_ACCESSKEY=
       #- CLOUD_AWS_CREDENTIALS_SECRETKEY=
+      - CLOUD_AWS_CREDENTIALS_PROFILEPATH=/.aws/credentials
+      - CLOUD_AWS_CREDENTIALS_INSTANCEPROFILE=false
       - CLOUD_AWS_REGION_STATIC=us-west-2
       - SPRING_PROFILES_ACTIVE=local
       - SPRING_REDIS_HOST=redis
