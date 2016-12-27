@@ -1,5 +1,5 @@
 # monbox
-Cloud monitoring service on AWS utilizing Spring Boot, Spring Cloud, AWS SDK, InfluxDB, Grafana, Docker and Terraform.
+Cloud monitoring service on AWS utilizing Spring Boot, Spring Cloud, AWS SDK, Prometheus, Grafana, Docker and Terraform.
 
 
 This is a [Spring Boot](http://projects.spring.io/spring-boot/) application.  
@@ -9,7 +9,21 @@ This is a [Spring Boot](http://projects.spring.io/spring-boot/) application.
 * [Docker Toolbox](http://docs.docker.com/mac/started/); or `docker`, `docker-machine` and `docker-compose` are required
 * Java [JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) 1.8.0_112 or better
 * [Maven](https://maven.apache.org/download.cgi) 3.3.9 or better
+* [aws-cli](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) 1.11.34 or better
 
+## Prepare AWS CLI
+
+See 
+
+* [aws configure](http://docs.aws.amazon.com/cli/latest/reference/configure/)
+* [Configuring the AWS Command Line Interface](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html)
+
+You must configure a `default` profile, e.g., 
+
+```
+$ aws configure --profile default
+```
+ 
 ## How to build
 
 ```
@@ -31,7 +45,7 @@ $ mvn spring-boot:run
 ### with Java
 
 ```
-$ java -jar monbox-collector-x.x.x.jar
+$ java -jar monbox-x.x.x.jar
 ```
 
 ### with Docker
@@ -124,14 +138,17 @@ On a Mac we cannot access running Docker containers from localhost.
 After running `docker-machine ip {env}` where `{env}` is your instance of a docker-machine, add an entry in `/etc/hosts` that maps `DOCKER_HOST` IP address to a memorable hostname.
 
 
-#### Work with images
+#### Work with image
 
 Services are accessible via the Docker host (or IP address) and port 
 
 | Service           | Host Port | Container Port |
 |-------------------|-----------|----------------|
-| Monbox Collector | 80        | 8080           |
+| Monbox Collector  | 80        | 8080           |
+| Redis             | 6379      | 6379           |
+| CAdvisor          | 9080      | 8080           |
 
+Visit e.g., `http://192.168.99.100/mappings`
 
 #### Stop image (and remove it)
 

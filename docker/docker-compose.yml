@@ -5,11 +5,38 @@
 version: '2'
 
 services:
-
-  springboot-fiesta:
-    image: fastnsilver/monbox-collector
+    
+  ### REDIS
+  redis:
+    image: redis:3.2.6-alpine
+    cpu_shares: 40
+    mem_limit: 1g
+    ports:
+      - 6379:6379
+    
+  ### CADVISOR
+  cadvisor:
+    image: google/cadvisor:latest
+    cpu_shares: 10
+    mem_limit: 128m
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - 9080:8080
+      
+  ### MONBOX
+  monbox:
+    image: fastnsilver/monbox
+    cpu_shares: 40
+    mem_limit: 512m
     ports:
       - 80:8080
     environment:
+      - SPRING_REDIS_HOST=redis
       - DOCKER_IP=$DOCKER_IP
       - JAVA_OPTS=-Xmx512m -XX:+UseG1GC -XX:+UseStringDeduplication
+    links:
+      - redis

@@ -11,10 +11,6 @@ spring:
 server:
   port: 8080
 
-management:
-  port: 9090
-
-
 aws:
   # Collector schedule (required)
   cron: 0 0/5 * * * *
@@ -28,20 +24,21 @@ aws:
     - Role
     - Owner
 
-    # AWS Proxy Host
+  # AWS Proxy Host
   proxyHost: localhost
 
   # AWS Proxy Port
   proxyPort: 3333
 
   # AWS Non Proxy
-  # nonProxy=xxx.xxx.xxx.xxx
+  nonProxy: 169.254.169.254
 
   # AWS Profile to be used if any
   profile: default
   
 logbook:
   exclude:
+    - /favicon.ico
     - /health
     - /prometheus
     - /v2/api-docs

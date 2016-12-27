@@ -62,7 +62,7 @@ public class CloudConfig extends CollectorItem {
         return (getOptions().get(CPU_ALERT) != null) ? (double) getOptions().get(CPU_ALERT) : CPU_ALERT_THRESHOLD_DEFAULT;
     }
 
-    public double  getMemoryError() {
+    public double getMemoryError() {
         return (getOptions().get(MEMORY_ERROR) != null) ? (long) getOptions().get(MEMORY_ERROR) : MEMORY_ERROR_THRESHOLD_DEFAULT;
     }
 
@@ -71,19 +71,19 @@ public class CloudConfig extends CollectorItem {
 
     }
 
-    public long getDiskioError() {
+    public long getDiskIoError() {
         return (getOptions().get(DISKIO_ERROR) != null) ? (long) getOptions().get(DISKIO_ERROR) : DISK_IO_ERROR_THRESHOLD_DEFAULT;
     }
 
-    public long getDiskioAlert() {
+    public long getDiskIoAlert() {
         return (getOptions().get(DISKIO_ALERT) != null) ? (long) getOptions().get(DISKIO_ALERT) : DISK_IO_ALERT_THRESHOLD_DEFAULT;
     }
 
-    public long getNetworkioError() {
+    public long getNetworkIoError() {
         return (getOptions().get(NETWORKIO_ERROR) != null) ? (long) getOptions().get(NETWORKIO_ERROR) : NETWORK_IO_ERROR_THRESHOLD_DEFAULT;
     }
 
-    public long getNetworkioAlert() {
+    public long getNetworkIoAlert() {
         return (getOptions().get(NETWORKIO_ALERT) != null) ? (long) getOptions().get(NETWORKIO_ALERT) : NETWORK_IO_ALERT_THRESHOLD_DEFAULT;
     }
 

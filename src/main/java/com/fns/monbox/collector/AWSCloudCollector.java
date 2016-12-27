@@ -19,7 +19,7 @@ public class AWSCloudCollector extends Collector {
 		AWSCloudCollector protoType = new AWSCloudCollector();
 		protoType.setName("AWSCloud");
 		protoType.setOnline(true);
-    protoType.setEnabled(true);
+		protoType.setEnabled(true);
 		protoType.setCollectorType(CollectorType.Cloud);
 		protoType.setLastExecuted(System.currentTimeMillis());
 		return protoType;

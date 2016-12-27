@@ -1,5 +1,23 @@
 package com.fns.monbox.collector;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.PostConstruct;
+
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+
 import com.amazonaws.auth.AWSCredentialsProviderChain;
 import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
@@ -30,21 +48,6 @@ import com.fns.monbox.model.NameValue;
 import com.fns.monbox.repository.CloudInstanceRepository;
 import com.fns.monbox.repository.CloudSubNetworkRepository;
 import com.fns.monbox.repository.CloudVirtualNetworkRepository;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Collects the instance specific data from AWS.
@@ -64,10 +67,10 @@ public class DefaultAWSCloudClient implements AWSCloudClient {
     @Autowired
     public DefaultAWSCloudClient(AWSCloudSettings settings) {
         this.settings = settings;
-        setClients();
     }
 
 
+    @PostConstruct
     public final void setClients() {
         System.getProperties().put("http.proxyHost", settings.getProxyHost());
         System.getProperties().put("http.proxyPort", settings.getProxyPort());
@@ -253,7 +256,6 @@ public class DefaultAWSCloudClient implements AWSCloudClient {
 
 
     /* Averages CPUUtil every minute for the last hour */
-    @SuppressWarnings("PMD.UnusedFormalParameter")
     @Override
     public Double getInstanceCPUSinceLastRun(String instanceId, long lastUpdated) {
 

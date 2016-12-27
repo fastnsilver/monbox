@@ -29,7 +29,6 @@ public interface AWSCloudClient {
     void setAutoScalingClient(AmazonAutoScaling autoScalingClient) ;
 
     /* Averages CPUUtil every minute for the last hour */
-    @SuppressWarnings("PMD.UnusedFormalParameter")
     Double getInstanceCPUSinceLastRun(String instanceId, long lastUpdated);
 
     /* Averages CPUUtil every minute for the last hour */
