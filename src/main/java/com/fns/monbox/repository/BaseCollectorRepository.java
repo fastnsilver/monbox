@@ -2,7 +2,6 @@ package com.fns.monbox.repository;
 
 import com.fns.monbox.model.Collector;
 import com.fns.monbox.model.CollectorType;
-import org.bson.types.ObjectId;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.List;
  *
  * @param <T> Class that extends {@link Collector}
  */
-public interface BaseCollectorRepository<T extends Collector> extends CrudRepository<T, ObjectId> {
+public interface BaseCollectorRepository<T extends Collector> extends CrudRepository<T, String> {
 
     /**
      * Finds a {@link Collector} by its name.

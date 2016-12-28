@@ -1,57 +1,57 @@
+server:
+  port: 8080
+  
 spring:
   metrics:
     export:
       statsd:
         prefix: local
         host: localhost
-
-server:
-  port: 8080
-
-management:
-  port: 9090
-
-# Database Name
-dbname: monbox
-
-# Database HostName - default is localhost
-dbhost: localhost
-
-# Database Port - default is 27017
-dbport: 27017
-
-# MongoDB replicaset
-#dbreplicaset: [false if you are not using MongoDB replicaset]
-#dbhostport: [host1:port1,host2:port2,host3:port3]
-
-# Database Username - default is blank
-dbusername: monbox
-
-# Database Password - default is blank
-dbpassword: 4$vHGjK^50
-
-# Logging File location
-logging:
-  file: ./logs/cloud.log
-
-
+  redis:
+    host: localhost
+    port: 6379
+      
 aws:
   # Collector schedule (required)
-  cron: 0 0/5 * * * *
+  ## once every minute
+  cron: 0 0/1 * * * *
 
   # AWS ValidTag Key - To look for tags that you expect on your resource
   validTagKey:
-    - ABC
-    - XYZ
+    - Name
+    - Application
+    - Environment
+    - Stack
+    - Role
+    - Owner
 
-    # AWS Proxy Host
+  # AWS Proxy Host
   proxyHost: localhost
 
   # AWS Proxy Port
   proxyPort: 3333
 
   # AWS Non Proxy
-  # nonProxy=xxx.xxx.xxx.xxx
+  nonProxy: 169.254.169.254
 
   # AWS Profile to be used if any
   profile: default
+  
+logbook:
+  exclude:
+    - /favicon.ico
+    - /health
+    - /prometheus
+    - /v2/api-docs
+  filter.enabled: true
+  format.style: json
+  obfuscate:
+    headers:
+      - Authorization
+      - X-Secret
+    parameters:
+      - access_token
+      - password
+  write:
+    category: http.wire-log
+    level: INFO

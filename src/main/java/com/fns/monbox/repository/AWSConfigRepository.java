@@ -1,16 +1,30 @@
 package com.fns.monbox.repository;
 
-import com.fns.monbox.config.CloudConfig;
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.repository.Query;
-
 import java.util.List;
+import java.util.Map;
 
-public interface AWSConfigRepository extends BaseCollectorItemRepository<CloudConfig> {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
-    @Query(value="{ 'collectorId' : ?0, options.accessKey : ?1, options.secretKey : ?2}")
-    CloudConfig findCloudConfig(ObjectId collectorId, String accessKey, String secretKey);
+import com.fns.monbox.model.CloudConfig;
+import com.google.common.collect.ImmutableMap;
 
-    @Query(value="{ 'collectorId' : ?0, enabled: true}")
-    List<CloudConfig> findEnabledCloudConfig(ObjectId collectorId);
+@Repository
+public class AWSConfigRepository {
+
+	private BaseCollectorItemRepository<CloudConfig> baseCollectorItemRepository;
+	
+	@Autowired
+	public AWSConfigRepository(BaseCollectorItemRepository<CloudConfig> baseCollectorItemRepository) {
+		this.baseCollectorItemRepository = baseCollectorItemRepository;
+	}
+	
+    public CloudConfig findCloudConfig(String collectorId, String accessKey, String secretKey) {
+    	Map<String, Object> options = ImmutableMap.of("accessKey", accessKey, "secretKey", secretKey);
+    	return baseCollectorItemRepository.findByCollectorIdAndOptions(collectorId, options);
+    }
+
+    public List<CloudConfig> findEnabledCloudConfig(String collectorId) {
+    	return baseCollectorItemRepository.findByCollectorIdAndEnabled(collectorId, true);
+    }
 }

@@ -1,11 +1,10 @@
 package com.fns.monbox.model;
 
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.redis.core.RedisHash;
 
 /**
  * <p>
@@ -20,14 +19,14 @@ import java.util.Map;
  *      Ideally, the description will be unique for a given {@link Collector}.
  * </p>
  */
-@Document(collection="collector_items")
+@RedisHash("collector_items")
 public class CollectorItem extends BaseModel {
 
     private String description;
     private String niceName;
     private boolean enabled;
     private boolean pushed;
-    private ObjectId collectorId;
+    private String collectorId;
     private long lastUpdated;
     private Map<String,Object> options = new HashMap<>();
 
@@ -50,11 +49,11 @@ public class CollectorItem extends BaseModel {
         this.enabled = enabled;
     }
 
-    public ObjectId getCollectorId() {
+    public String getCollectorId() {
         return collectorId;
     }
 
-    public void setCollectorId(ObjectId collectorId) {
+    public void setCollectorId(String collectorId) {
         this.collectorId = collectorId;
     }
 

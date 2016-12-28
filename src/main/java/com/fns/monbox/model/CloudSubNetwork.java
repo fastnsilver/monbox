@@ -1,17 +1,17 @@
 package com.fns.monbox.model;
 
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@Document(collection = "cloud_subnetwork")
-public class CloudSubNetwork extends BaseModel{
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
+
+@RedisHash("cloud_subnetwork")
+public class CloudSubNetwork extends BaseModel {
     @Indexed
-    private String subnetId;
+	private String subnetId;
     private String accountNumber;
     private String virtualNetworkId;
     private String cidrBlock;

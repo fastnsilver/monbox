@@ -1,0 +1,53 @@
+# DOCKER COMPOSE CONFIGURATION
+# This file uses the version 2 docker-compose file format, described here:
+# https://docs.docker.com/compose/compose-file/#version-2
+
+version: '2'
+
+services:
+    
+  ### REDIS
+  redis:
+    image: redis:3.2.6-alpine
+    cpu_shares: 40
+    mem_limit: 1g
+    ports:
+      - 6379:6379
+    
+  ### CADVISOR
+  cadvisor:
+    image: google/cadvisor:latest
+    cpu_shares: 10
+    mem_limit: 128m
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - 9080:8080
+      
+  ### MONBOX
+  #### Consult your user specific profile credentials file (i.e., ~/.aws/credentials); 
+  #### Uncomment and supply values for accessKey and secretKey environment variables below
+  #### @see http://cloud.spring.io/spring-cloud-static/spring-cloud-aws/1.1.3.RELEASE/#_sdk_credentials_configuration
+  monbox:
+    image: fastnsilver/monbox
+    cpu_shares: 40
+    mem_limit: 512m
+    volumes:
+      - $HOME/.aws/:/.aws/
+    ports:
+      - 80:8080
+    environment:
+      #- CLOUD_AWS_CREDENTIALS_ACCESSKEY=
+      #- CLOUD_AWS_CREDENTIALS_SECRETKEY=
+      - CLOUD_AWS_CREDENTIALS_PROFILEPATH=/.aws/credentials
+      - CLOUD_AWS_CREDENTIALS_INSTANCEPROFILE=false
+      - CLOUD_AWS_REGION_STATIC=us-west-2
+      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_REDIS_HOST=redis
+      - DOCKER_IP=$DOCKER_IP
+      - JAVA_OPTS=-Xmx512m -XX:+UseG1GC -XX:+UseStringDeduplication
+    links:
+      - redis

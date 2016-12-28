@@ -1,13 +1,12 @@
 package com.fns.monbox.repository;
 
-import com.fns.monbox.model.CloudInstanceHistory;
-import org.bson.types.ObjectId;
-import org.springframework.data.repository.CrudRepository;
-
 import java.util.Collection;
 
-public interface CloudInstanceHistoryRepository extends
-        CrudRepository<CloudInstanceHistory, ObjectId> {
+import org.springframework.data.repository.CrudRepository;
+
+import com.fns.monbox.model.CloudInstanceHistory;
+
+public interface CloudInstanceHistoryRepository extends CrudRepository<CloudInstanceHistory, String> {
 
     Collection<CloudInstanceHistory> findByAccountNumber(String accountNumber);
 

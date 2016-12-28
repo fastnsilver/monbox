@@ -1,11 +1,11 @@
 package com.fns.monbox.model;
 
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.redis.core.RedisHash;
 
 /**
  * The collectors that have been registered in the given Dashboard app instance.
  */
-@Document(collection="collectors")
+@RedisHash("collectors")
 public class Collector extends BaseModel {
     private String name;
     private CollectorType collectorType;

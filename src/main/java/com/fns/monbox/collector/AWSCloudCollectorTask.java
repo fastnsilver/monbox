@@ -1,6 +1,6 @@
 package com.fns.monbox.collector;
 
-import com.fns.monbox.config.CloudConfig;
+import com.fns.monbox.model.CloudConfig;
 import com.fns.monbox.model.CloudInstance;
 import com.fns.monbox.model.CloudInstanceHistory;
 import com.fns.monbox.model.CloudSubNetwork;
@@ -30,7 +30,6 @@ import java.util.Set;
 /**
  * Collects {@link AWSCloudCollector} data from feature content source system.
  */
-@SuppressWarnings("PMD")
 @Component
 public class AWSCloudCollectorTask extends CollectorTask<AWSCloudCollector> {
 
@@ -101,11 +100,11 @@ public class AWSCloudCollectorTask extends CollectorTask<AWSCloudCollector> {
         log("Starting AWS collection...");
         log("Collecting AWS Cloud Data...");
 
-        Map<String, List<CloudInstance>> accountToInstnaceMap = collectInstances();
+        Map<String, List<CloudInstance>> accountToInstanceMap = collectInstances();
 
         Map<String, String> instanceToAccountMap = new HashMap<>();
-        for (String account : accountToInstnaceMap.keySet()) {
-            Collection<CloudInstance> instanceList = accountToInstnaceMap.get(account);
+        for (String account : accountToInstanceMap.keySet()) {
+            Collection<CloudInstance> instanceList = accountToInstanceMap.get(account);
             for (CloudInstance ci : instanceList) {
                 instanceToAccountMap.put(ci.getInstanceId(), account);
             }

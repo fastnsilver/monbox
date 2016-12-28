@@ -1,17 +1,16 @@
 package com.fns.monbox.model;
 
 
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "cloud_volume")
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
+
+@RedisHash("cloud_volume")
 public class CloudVolumeStorage extends BaseModel{
     @Indexed
-    private String volumeId;
-
+	private String volumeId;
     @Indexed
     private String accountNumber;
     private String status;

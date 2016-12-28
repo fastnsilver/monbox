@@ -1,0 +1,9 @@
+## Deactivate auto-region and stack discovery when running unit tests "off cloud"
+cloud:
+  aws:
+    credentials:
+      instanceProfile: false
+    region:
+      static: us-west-2
+    stack:
+      auto: false

@@ -1,36 +1,23 @@
 package com.fns.monbox.repository;
 
-import com.fns.monbox.model.CloudVolumeStorage;
-import com.fns.monbox.model.NameValue;
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.repository.Query;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
-import org.springframework.data.repository.CrudRepository;
-
 import java.util.Collection;
 import java.util.List;
 
-public interface CloudVolumeRepository extends
-        CrudRepository<CloudVolumeStorage, ObjectId>,
-        QueryDslPredicateExecutor<CloudVolumeStorage> {
+import org.springframework.data.repository.CrudRepository;
 
-    @Query(value = "{ collectorItemId:  ?0 }")
-    Collection<CloudVolumeStorage> findByCollectorItemId(ObjectId collectorItemId);
+import com.fns.monbox.model.CloudVolumeStorage;
+import com.fns.monbox.model.NameValue;
 
-    @Query(value = "{volumeId : ?0}")
+public interface CloudVolumeRepository extends CrudRepository<CloudVolumeStorage, String> {
+
     CloudVolumeStorage findByVolumeId(String volumeId);
 
-    @Query(value = "{ tags: ?0 }")
     Collection<CloudVolumeStorage> findByTags(List<NameValue> tags);
-
-    @Query(value = "{ 'tags.name' : ?0, 'tags.value' : ?1 }")
-    Collection<CloudVolumeStorage> findByTagNameAndValue(String name, String value);
 
     Collection<CloudVolumeStorage> findByVolumeIdIn(List<String> volumeId);
 
     Collection<CloudVolumeStorage> findByAttachInstancesIn(List<String> attachInstances);
 
-    @Query(value = "{accountNumber : ?0}")
     Collection<CloudVolumeStorage> findByAccountNumber(String accountNumber);
 
 }
