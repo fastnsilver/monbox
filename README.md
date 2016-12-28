@@ -1,5 +1,5 @@
 # monbox
-Cloud monitoring service on AWS utilizing Spring Boot, Spring Cloud, AWS SDK, Prometheus, Grafana, Docker and Terraform.
+Cloud monitoring service on AWS utilizing Spring Boot, Spring Cloud, AWS SDK, Prometheus, Grafana, Docker and Terraform.  Heavily borrowed from [Hygieia](https://github.com/capitalone/Hygieia)'s AWS Cloud [collector](https://github.com/capitalone/Hygieia/tree/master/collectors/cloud/aws) but employs Redis (Elasticache) for persistence.
 
 
 This is a [Spring Boot](http://projects.spring.io/spring-boot/) application.  
@@ -34,7 +34,7 @@ $ mvn clean install
 
 ### Jenkinsfile
 
-TBD
+Pipeline support to be designed
 
 ## A few notes on Redis 
 
@@ -64,9 +64,14 @@ To tear down
 ```
 docker ps
 docker kill {container.id}
+docker rm {container.id}
 ```
 
 where `{container.id}` is the id of the running Redis container.
+
+### Elasticache support
+
+Coming soon
 
 ## How to Run
 
