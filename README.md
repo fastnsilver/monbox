@@ -195,6 +195,19 @@ Visit e.g., `http://192.168.99.100/mappings`
 ./shutdown.sh
 ```
 
+## Test Endpoints
+
+For test purposes only!  Not recommended for large environments with 1000s of compute resources.
+
+| Request | Description |
+|---------|-------------|
+| GET /cloudInstance?all | |
+| GET /cloudInstance/history?all | |
+| GET /volume?all | |
+| GET /subNetwork?all | |
+| GET /virtualNetwork?all | |
+
+
 ## Working with Maven Site 
 
 ### Stage
