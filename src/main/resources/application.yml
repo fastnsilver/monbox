@@ -13,7 +13,8 @@ spring:
       
 aws:
   # Collector schedule (required)
-  cron: 0 0/5 * * * *
+  ## once every minute
+  cron: 0 0/1 * * * *
 
   # AWS ValidTag Key - To look for tags that you expect on your resource
   validTagKey:
