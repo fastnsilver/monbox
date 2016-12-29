@@ -28,6 +28,12 @@ $ aws configure --profile default
  
 ## How to build
 
+### Clone
+
+```
+git clone git@github.com:fastnsilver/monbox.git
+```
+
 ### with Maven
 
 ```
@@ -39,7 +45,7 @@ $ mvn clean verify
 Pipeline support to be designed
 
 
-## A few notes on Redis 
+## Prepare to work with Redis 
 
 This service interacts with a Redis instance.  Assumes instance is up-and-running at localhost (127.0.0.1). If you want to change that then you need to add the following argument (when attempting to run the service)
 
@@ -179,14 +185,16 @@ where `{1}` above would be replaced with an existing docker-machine name
 Caution! This will remove the VM hosting all your Docker images.
 
 
-#### Build image
+## Docker notes
+
+### Build image
 
 ```
 ./build.sh
 ```
 
 
-#### Publish image
+### Publish image
 
 Assumes proper authentication credentials have been added to `$HOME/.m2/settings.xml`. See:
 
@@ -197,19 +205,19 @@ mvn clean install -DpushImage
 ```
 
 
-#### Pull image
+### Pull image
 
 TBD
 
 
-#### Run image
+### Run image
 
 ```
 ./startup.sh
 ```
 
 
-##### Running a local development environment
+#### Running a local development environment
 
 See [Running localhost](https://forums.docker.com/t/using-localhost-for-to-access-running-container/3148)
 
@@ -218,7 +226,7 @@ On a Mac we cannot access running Docker containers from localhost.
 After running `docker-machine ip {env}` where `{env}` is your instance of a docker-machine, add an entry in `/etc/hosts` that maps `DOCKER_HOST` IP address to a memorable hostname.
 
 
-#### Work with image
+### Work with image
 
 Services are accessible via the Docker host (or IP address) and port 
 
@@ -230,11 +238,62 @@ Services are accessible via the Docker host (or IP address) and port
 
 Visit e.g., `http://192.168.99.100/mappings`
 
-#### Stop image (and remove it)
+### Stop image (and remove it)
 
 ```
 ./shutdown.sh
 ```
+
+
+## EC2 notes
+
+See [Getting Started](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-launch-instance_linux) guide. Minimum required instance type is `t2.micro` (which qualifies for free-tier).
+
+Make sure to create a [Key-pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) and download the private key to a safe location.
+Also create an [IAM Role](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) with a `ReadOnlyAccess` policy and assign this role to the instance upon creation.
+
+Connect to your EC2 instance with
+
+```
+ssh -i /path/to/{your-private-key-filename}.pem ec2-user@{public-ip-address-of-instance}
+```
+
+Configure an additional YUM repo and install the following packages
+
+```
+sudo wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
+sudo sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
+sudo yum install -y apache-maven java-1.8.0 git
+```
+
+Set `JAVA_HOME` and `PATH` in `.bashrc` so that Java 8 is the default
+
+* Change directories and open VI
+
+```
+cd ~
+vi .bashrc
+```
+
+* Add the following lines at the end of the file, save, and exit VI
+
+```
+export JAVA_HOME=/usr/lib/jvm/jre-1.8.0-openjdk
+export PATH=$JAVA_HOME/bin:$PATH
+```
+
+* Update session
+
+```
+source ~/.bash_profile
+```
+
+* Verify Maven is employing Java 8
+
+```
+mvn -version
+```
+
 
 ## Test Endpoints
 
