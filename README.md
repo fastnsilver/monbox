@@ -1,5 +1,5 @@
 # monbox
-Cloud monitoring service on AWS utilizing Spring Boot, Spring Cloud, AWS SDK, Prometheus, Grafana, Docker and Terraform.  Heavily borrowed from [Hygieia](https://github.com/capitalone/Hygieia)'s AWS Cloud [collector](https://github.com/capitalone/Hygieia/tree/master/collectors/cloud/aws) but employs Redis (Elasticache) for persistence.
+Cloud monitoring service on AWS utilizing Spring Boot, Spring Cloud, AWS SDK, Prometheus, Grafana, Docker and Terraform.  Heavily borrowed from [Hygieia](https://github.com/capitalone/Hygieia)'s AWS Cloud [collector](https://github.com/capitalone/Hygieia/tree/master/collectors/cloud/aws) but employs Redis (or ElastiCache) for persistence.
 
 
 This is a [Spring Boot](http://projects.spring.io/spring-boot/) application.  
@@ -28,13 +28,16 @@ $ aws configure --profile default
  
 ## How to build
 
+### with Maven
+
 ```
-$ mvn clean install
+$ mvn clean verify
 ```
 
-### Jenkinsfile
+### with Jenkinsfile
 
 Pipeline support to be designed
+
 
 ## A few notes on Redis 
 
@@ -69,9 +72,47 @@ docker rm {container.id}
 
 where `{container.id}` is the id of the running Redis container.
 
-### Elasticache support
+### ElastiCache support
 
-Coming soon
+* [What is ElastiCache?](http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/WhatIs.html)
+* [When Should I Use ElastiCache?](http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/UseCases.html)
+* [Managing ElastiCache](http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/WhatIs.Managing.html)
+
+#### Off-cloud
+
+From [Accessing ElastiCache Resources from Outside AWS](http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/Access.Outside.html)
+
+> for testing and development purposes only. It is not recommended for production use.
+
+Running a local instance of this service requires that you provision a [NAT instance](http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_NAT_Instance.html) or configure a [NAT Gateway](http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/vpc-nat-gateway.html).  See [Comparison of NAT Instances and NAT Gateways](http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/vpc-nat-comparison.html).
+
+Assign an [Elastic IP](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html) to the NAT instance or NAT Gateway and use that IP address as the value for the Redis host. 
+
+
+#### On AWS
+
+> configure an ElastiCache cluster in an Amazon VPC 
+
+See [(Amazon VPC) with ElastiCache](http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/AmazonVPC.html)
+
+Each node within a cluster will have an endpoint addressable at 
+
+```
+{node.name}.{cluster.id}.{region.id}.cache.amazonaws.com:6379
+```
+
+Once the cluster is configured and available make sure to set the Redis host environment variable. 
+
+This can be done e.g., 
+
+##### when running service on an EC2 instance, single JVM
+
+by supplying a command-line argument `-Dspring.redis.host`
+
+##### when running as a task on an ECS cluster 
+
+by supplying an environment variable, `SPRING_REDIS_HOST`, within a [task definition](http://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_defintions.html)
+
 
 ## How to Run
 
