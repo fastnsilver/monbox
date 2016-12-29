@@ -1,7 +1,6 @@
 package com.fns.monbox.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.aws.cache.config.annotation.EnableElastiCache;
 import org.springframework.cloud.aws.context.annotation.ConditionalOnAwsCloudEnvironment;
 import org.springframework.cloud.aws.context.config.annotation.EnableContextCredentials;
 import org.springframework.cloud.aws.context.config.annotation.EnableContextInstanceData;
