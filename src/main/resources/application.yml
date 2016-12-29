@@ -2,6 +2,9 @@ server:
   port: 8080
   
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.cloud.aws.autoconfigure.context.ContextStackAutoConfiguration
   metrics:
     export:
       statsd:
@@ -13,8 +16,8 @@ spring:
       
 aws:
   # Collector schedule (required)
-  ## once every minute
-  cron: 0 0/1 * * * *
+  ## once every 5 minutes
+  cron: 0 0/5 * * * *
 
   # AWS ValidTag Key - To look for tags that you expect on your resource
   validTagKey:

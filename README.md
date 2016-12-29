@@ -9,7 +9,7 @@ This is a [Spring Boot](http://projects.spring.io/spring-boot/) application.
 * An [AWS](https://aws.amazon.com) account. You may follow instructions to create one [here](http://docs.aws.amazon.com/AmazonSimpleDB/latest/DeveloperGuide/AboutAWSAccounts.html).
 * [aws-cli](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) 1.11.34 or better
 * [Docker Toolbox](http://docs.docker.com/mac/started/); or `docker`, `docker-machine` and `docker-compose` are required
-* Java [JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) 1.8.0_112 or better
+* Java [JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) 1.8.0_111 or better
 * [Maven](https://maven.apache.org/download.cgi) 3.3.9 or better
 
 
@@ -139,7 +139,7 @@ $ mvn spring-boot:run -Dspring.profiles.active=local -Djava.security.egd=file:/d
 ### with Java
 
 ```
-$ java -jar monbox-x.x.x.jar -Dspring.profiles.active=local -Djava.security.egd=file:/dev/./urandom
+$ java -jar monbox-x.x.x-SNAPSHOT-exec.jar -Dspring.profiles.active=local -Djava.security.egd=file:/dev/./urandom
 ```
 
 ### with Docker
@@ -258,51 +258,81 @@ Visit e.g., `http://192.168.99.100/mappings`
 See [Getting Started](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-launch-instance_linux) guide. Minimum required instance type is `t2.micro` (which qualifies for free-tier).
 
 Make sure to create a [Key-pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) and download the private key to a safe location.
-Also create an [IAM Role](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) with a `ReadOnlyAccess` policy and assign this role to the instance upon creation.  The [Security group](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-rules-reference.html) should have TCP inbound ports 22 and 8080 open.
+Also create an [IAM Role](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) with a custom policy and assign this role to the instance upon creation.  The [Security group](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-rules-reference.html) should have TCP inbound ports 22 and 8080 open.
 
-Connect to your EC2 instance with
-
-```
-ssh -i /path/to/{your-private-key-filename}.pem ec2-user@{public-ip-address-of-instance}
-```
-
-Configure an additional YUM repo and install the following packages
+Policy
 
 ```
-sudo wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
-sudo sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
-sudo yum install -y apache-maven java-1.8.0-openjdk-devel git
 ```
 
-Set `JAVA_HOME` in `.mavenrc` so that Java 8 is the default
+Then...
 
-* Change directories and open VI
+* Connect to your EC2 instance with
 
-```
-cd ~
-vi .mavenrc
-```
+	```
+	ssh -i /path/to/{your-private-key-filename}.pem ec2-user@{public-ip-address-of-instance}
+	```
 
-* Add the following line to the file, save, and exit VI
+* Configure an additional YUM repo and install the following packages
 
-```
-JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.111-1.b15.25.amzn1.x86_64
-```
+	```
+	sudo wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
+	sudo sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
+	sudo yum install -y apache-maven java-1.8.0-openjdk-devel git
+	```
 
-> note: the minor version referenced above may be updated to a later version if one is available
+* Set `JAVA_HOME` and `PATH` in `.bashrc` so that Java 8 is the default
+
+	* Change directories and open VI
+
+		```
+		cd ~
+		vi .bashrc
+		```
+
+	* Add the following lines at the end of the file, save, and exit VI
+
+		```
+		export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.111-1.b15.25.amzn1.x86_64
+		export PATH=$JAVA_HOME/bin:$PATH
+		```
+
+		> note: the minor version referenced above may be updated to a later version if one is available
 
 * Update session
 
-```
-source ~/.bash_profile
-```
+	```
+	source ~/.bash_profile
+	```
 
 * Verify Maven is employing Java 8
 
-```
-mvn -version
-```
+	```
+	mvn -version
+	```
 
+* Clone
+
+	> See Clone above. Choose HTTPS option.
+
+* Build
+
+	```
+	cd monbox
+	mvn clean verify
+	```
+
+* Run
+
+	```
+	java -jar target/monbox-x.x.x-SNAPSHOT-exec.jar -Dspring.redis.host={elasticache.redis.endpoint}
+	```
+
+* Test connection to ElastiCache
+
+	```
+	nc -v {node.name}.{cluster.id}.{region.id}.cache.amazonaws.com 6379
+	```
 
 ## Test Endpoints
 
