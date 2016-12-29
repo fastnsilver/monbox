@@ -271,24 +271,25 @@ Configure an additional YUM repo and install the following packages
 ```
 sudo wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
 sudo sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
-sudo yum install -y apache-maven java-1.8.0 git
+sudo yum install -y apache-maven java-1.8.0-openjdk-devel git
 ```
 
-Set `JAVA_HOME` and `PATH` in `.bashrc` so that Java 8 is the default
+Set `JAVA_HOME` in `.mavenrc` so that Java 8 is the default
 
 * Change directories and open VI
 
 ```
 cd ~
-vi .bashrc
+vi .mavenrc
 ```
 
-* Add the following lines at the end of the file, save, and exit VI
+* Add the following line to the file, save, and exit VI
 
 ```
-export JAVA_HOME=/usr/lib/jvm/jre-1.8.0-openjdk
-export PATH=$JAVA_HOME/bin:$PATH
+JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.111-1.b15.25.amzn1.x86_64
 ```
+
+> note: the minor version referenced above may be updated to a later version if one is available
 
 * Update session
 
