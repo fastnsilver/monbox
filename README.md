@@ -30,6 +30,14 @@ $ aws configure --profile default
 
 ### Clone
 
+#### with HTTPS
+
+```
+git clone https://github.com/fastnsilver/monbox.git
+```
+
+#### with SSH
+
 ```
 git clone git@github.com:fastnsilver/monbox.git
 ```
