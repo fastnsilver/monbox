@@ -258,12 +258,7 @@ Visit e.g., `http://192.168.99.100/mappings`
 See [Getting Started](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-launch-instance_linux) guide. Minimum required instance type is `t2.micro` (which qualifies for free-tier).
 
 Make sure to create a [Key-pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) and download the private key to a safe location.
-Also create an [IAM Role](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) with a custom policy and assign this role to the instance upon creation.  The [Security group](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-rules-reference.html) should have TCP inbound ports 22 and 8080 open.
-
-Policy
-
-```
-```
+Also create an [IAM Role](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) with a `ReadOnlyAccess` policy and assign this role to the instance upon creation.  The [Security group](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-rules-reference.html) should have TCP inbound ports 22 and 8080 open.
 
 Then...
 
@@ -322,17 +317,26 @@ Then...
 	mvn clean verify
 	```
 
+* Test connection to ElastiCache
+
+	```
+	nc -v {node.name}.{cluster.id}.{region.id}.cache.amazonaws.com 6379
+	```
+	
+	or with Docker version of redis-cli
+	
+	```
+	sudo yum install -y docker
+	sudo service docker start
+	sudo docker sudo docker run -i -t prologic/redis-cli -h {node.name}.{cluster.id}.{region.id}.cache.amazonaws.com
+	```
+
 * Run
 
 	```
 	java -jar target/monbox-x.x.x-SNAPSHOT-exec.jar -Dspring.redis.host={elasticache.redis.endpoint}
 	```
 
-* Test connection to ElastiCache
-
-	```
-	nc -v {node.name}.{cluster.id}.{region.id}.cache.amazonaws.com 6379
-	```
 
 ## Test Endpoints
 
