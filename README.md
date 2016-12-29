@@ -1,5 +1,5 @@
 # monbox
-Cloud monitoring service on AWS utilizing Spring Boot, Spring Cloud, AWS SDK, Prometheus, Grafana, Docker and Terraform.  Heavily borrowed from [Hygieia](https://github.com/capitalone/Hygieia)'s AWS Cloud [collector](https://github.com/capitalone/Hygieia/tree/master/collectors/cloud/aws) but employs Redis (Elasticache) for persistence.
+Cloud monitoring service on AWS utilizing Spring Boot, Spring Cloud, AWS SDK, Prometheus, Grafana, Docker and Terraform.  Heavily borrowed from [Hygieia](https://github.com/capitalone/Hygieia)'s AWS Cloud [collector](https://github.com/capitalone/Hygieia/tree/master/collectors/cloud/aws) but employs Redis (or ElastiCache) for persistence.
 
 
 This is a [Spring Boot](http://projects.spring.io/spring-boot/) application.  
@@ -9,7 +9,7 @@ This is a [Spring Boot](http://projects.spring.io/spring-boot/) application.
 * An [AWS](https://aws.amazon.com) account. You may follow instructions to create one [here](http://docs.aws.amazon.com/AmazonSimpleDB/latest/DeveloperGuide/AboutAWSAccounts.html).
 * [aws-cli](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) 1.11.34 or better
 * [Docker Toolbox](http://docs.docker.com/mac/started/); or `docker`, `docker-machine` and `docker-compose` are required
-* Java [JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) 1.8.0_112 or better
+* Java [JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) 1.8.0_111 or better
 * [Maven](https://maven.apache.org/download.cgi) 3.3.9 or better
 
 
@@ -28,15 +28,32 @@ $ aws configure --profile default
  
 ## How to build
 
+### Clone
+
+#### with HTTPS
+
 ```
-$ mvn clean install
+git clone https://github.com/fastnsilver/monbox.git
 ```
 
-### Jenkinsfile
+#### with SSH
+
+```
+git clone git@github.com:fastnsilver/monbox.git
+```
+
+### with Maven
+
+```
+$ mvn clean verify
+```
+
+### with Jenkinsfile
 
 Pipeline support to be designed
 
-## A few notes on Redis 
+
+## Prepare to work with Redis 
 
 This service interacts with a Redis instance.  Assumes instance is up-and-running at localhost (127.0.0.1). If you want to change that then you need to add the following argument (when attempting to run the service)
 
@@ -69,9 +86,47 @@ docker rm {container.id}
 
 where `{container.id}` is the id of the running Redis container.
 
-### Elasticache support
+### ElastiCache support
 
-Coming soon
+* [What is ElastiCache?](http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/WhatIs.html)
+* [When Should I Use ElastiCache?](http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/UseCases.html)
+* [Managing ElastiCache](http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/WhatIs.Managing.html)
+
+#### Off-cloud
+
+From [Accessing ElastiCache Resources from Outside AWS](http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/Access.Outside.html)
+
+> for testing and development purposes only. It is not recommended for production use.
+
+Running a local instance of this service requires that you provision a [NAT instance](http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_NAT_Instance.html) or configure a [NAT Gateway](http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/vpc-nat-gateway.html).  See [Comparison of NAT Instances and NAT Gateways](http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/vpc-nat-comparison.html).
+
+Assign an [Elastic IP](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html) to the NAT instance or NAT Gateway and use that IP address as the value for the Redis host. 
+
+
+#### On AWS
+
+> configure an ElastiCache cluster in an Amazon VPC 
+
+See [(Amazon VPC) with ElastiCache](http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/AmazonVPC.html)
+
+Each node within a cluster will have an endpoint addressable at 
+
+```
+{node.name}.{cluster.id}.{region.id}.cache.amazonaws.com:6379
+```
+
+Once the cluster is configured and available make sure to set the Redis host environment variable. 
+
+This can be done e.g., 
+
+##### when running service on an EC2 instance, single JVM
+
+by supplying a command-line argument `-Dspring.redis.host`
+
+##### when running as a task on an ECS cluster 
+
+by supplying an environment variable, `SPRING_REDIS_HOST`, within a [task definition](http://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_defintions.html)
+
 
 ## How to Run
 
@@ -84,7 +139,7 @@ $ mvn spring-boot:run -Dspring.profiles.active=local -Djava.security.egd=file:/d
 ### with Java
 
 ```
-$ java -jar monbox-x.x.x.jar -Dspring.profiles.active=local -Djava.security.egd=file:/dev/./urandom
+$ java -jar monbox-x.x.x-SNAPSHOT-exec.jar -Dspring.profiles.active=local -Djava.security.egd=file:/dev/./urandom
 ```
 
 ### with Docker
@@ -138,14 +193,16 @@ where `{1}` above would be replaced with an existing docker-machine name
 Caution! This will remove the VM hosting all your Docker images.
 
 
-#### Build image
+## Docker notes
+
+### Build image
 
 ```
 ./build.sh
 ```
 
 
-#### Publish image
+### Publish image
 
 Assumes proper authentication credentials have been added to `$HOME/.m2/settings.xml`. See:
 
@@ -156,19 +213,19 @@ mvn clean install -DpushImage
 ```
 
 
-#### Pull image
+### Pull image
 
 TBD
 
 
-#### Run image
+### Run image
 
 ```
 ./startup.sh
 ```
 
 
-##### Running a local development environment
+#### Running a local development environment
 
 See [Running localhost](https://forums.docker.com/t/using-localhost-for-to-access-running-container/3148)
 
@@ -177,7 +234,7 @@ On a Mac we cannot access running Docker containers from localhost.
 After running `docker-machine ip {env}` where `{env}` is your instance of a docker-machine, add an entry in `/etc/hosts` that maps `DOCKER_HOST` IP address to a memorable hostname.
 
 
-#### Work with image
+### Work with image
 
 Services are accessible via the Docker host (or IP address) and port 
 
@@ -189,11 +246,97 @@ Services are accessible via the Docker host (or IP address) and port
 
 Visit e.g., `http://192.168.99.100/mappings`
 
-#### Stop image (and remove it)
+### Stop image (and remove it)
 
 ```
 ./shutdown.sh
 ```
+
+
+## EC2 notes
+
+See [Getting Started](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-launch-instance_linux) guide. Minimum required instance type is `t2.micro` (which qualifies for free-tier).
+
+Make sure to create a [Key-pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) and download the private key to a safe location.
+Also create an [IAM Role](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) with a `ReadOnlyAccess` policy and assign this role to the instance upon creation.  The [Security group](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-rules-reference.html) should have TCP inbound ports 22 and 8080 open.
+
+Then...
+
+* Connect to your EC2 instance with
+
+	```
+	ssh -i /path/to/{your-private-key-filename}.pem ec2-user@{public-ip-address-of-instance}
+	```
+
+* Configure an additional YUM repo and install the following packages
+
+	```
+	sudo wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
+	sudo sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
+	sudo yum install -y apache-maven java-1.8.0-openjdk-devel git
+	```
+
+* Set `JAVA_HOME` and `PATH` in `.bashrc` so that Java 8 is the default
+
+	* Change directories and open VI
+
+		```
+		cd ~
+		vi .bashrc
+		```
+
+	* Add the following lines at the end of the file, save, and exit VI
+
+		```
+		export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.111-1.b15.25.amzn1.x86_64
+		export PATH=$JAVA_HOME/bin:$PATH
+		```
+
+		> note: the minor version referenced above may be updated to a later version if one is available
+
+* Update session
+
+	```
+	source ~/.bash_profile
+	```
+
+* Verify Maven is employing Java 8
+
+	```
+	mvn -version
+	```
+
+* Clone
+
+	> See Clone above. Choose HTTPS option.
+
+* Build
+
+	```
+	cd monbox
+	mvn clean verify
+	```
+
+* Test connection to ElastiCache
+
+	```
+	nc -v {node.name}.{cluster.id}.{region.id}.cache.amazonaws.com 6379
+	```
+	
+	or with Docker version of redis-cli
+	
+	```
+	sudo yum install -y docker
+	sudo service docker start
+	sudo docker sudo docker run -i -t prologic/redis-cli -h {node.name}.{cluster.id}.{region.id}.cache.amazonaws.com
+	```
+
+* Run
+
+	```
+	java -jar target/monbox-x.x.x-SNAPSHOT-exec.jar -Dspring.redis.host={elasticache.redis.endpoint}
+	```
+
 
 ## Test Endpoints
 
