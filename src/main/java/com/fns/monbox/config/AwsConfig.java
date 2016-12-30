@@ -1,10 +1,6 @@
 package com.fns.monbox.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.aws.context.annotation.ConditionalOnAwsCloudEnvironment;
-import org.springframework.cloud.aws.context.config.annotation.EnableContextCredentials;
-import org.springframework.cloud.aws.context.config.annotation.EnableContextInstanceData;
-import org.springframework.cloud.aws.context.config.annotation.EnableContextRegion;
 import org.springframework.cloud.aws.core.region.RegionProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,12 +47,5 @@ public class AwsConfig {
 		}
 		
 	}
-	
-    @Configuration
-    @EnableContextCredentials(instanceProfile = true)
-    @EnableContextRegion(autoDetect = true)
-    @EnableContextInstanceData
-    @ConditionalOnAwsCloudEnvironment
-    protected static class ElastiCacheConfig {}
 	
 }
