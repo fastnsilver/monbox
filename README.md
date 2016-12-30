@@ -193,6 +193,18 @@ where `{1}` above would be replaced with an existing docker-machine name
 Caution! This will remove the VM hosting all your Docker images.
 
 
+## How to remote Debug
+
+May be useful when you want to debug the service running on e.g., an EC2 instance.
+
+See [this](http://docs.spring.io/spring-boot/docs/current/maven-plugin/examples/run-debug.html) Spring Boot Maven Plugin page for further details.
+
+```
+export SPRING_REDIS_HOST={elasticache.redis.endpoint}
+mvn spring-boot:run -Drun.jvmArguments="-Xdebug -Xrunjdwp:server=y,transport=dt_socket,suspend=n,address=8000"
+```
+
+
 ## Docker notes
 
 ### Build image
@@ -258,7 +270,7 @@ Visit e.g., `http://192.168.99.100/mappings`
 See [Getting Started](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-launch-instance_linux) guide. Minimum required instance type is `t2.micro` (which qualifies for free-tier).
 
 Make sure to create a [Key-pair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) and download the private key to a safe location.
-Also create an [IAM Role](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) with a `ReadOnlyAccess` policy and assign this role to the instance upon creation.  The [Security group](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-rules-reference.html) should have TCP inbound ports 22 and 8080 open.
+Also create an [IAM Role](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) with a `ReadOnlyAccess` policy and assign this role to the instance upon creation.  The [Security group](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-rules-reference.html) should have TCP inbound ports 22, 8000 and 8080 open.
 
 Then...
 
@@ -334,7 +346,8 @@ Then...
 * Run
 
 	```
-	java -jar target/monbox-x.x.x-SNAPSHOT-exec.jar -Dspring.redis.host={elasticache.redis.endpoint}
+	export SPRING_REDIS_HOST=elasticache.redis.endpoint}
+	java -jar target/monbox-x.x.x-SNAPSHOT-exec.jar
 	```
 
 
