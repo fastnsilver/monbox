@@ -25,22 +25,26 @@ You must configure a `default` profile, e.g.,
 ```
 $ aws configure --profile default
 ```
- 
-## How to build
 
-### Clone
 
-#### with HTTPS
+## How to obtain the source
+
+You'll use a git client.
+
+### with HTTPS
 
 ```
 git clone https://github.com/fastnsilver/monbox.git
 ```
 
-#### with SSH
+### with SSH
 
 ```
 git clone git@github.com:fastnsilver/monbox.git
 ```
+
+
+## How to build
 
 ### with Maven
 
@@ -50,7 +54,7 @@ $ mvn clean verify
 
 ### with Jenkinsfile
 
-Pipeline support to be designed
+>Pipeline support to be designed
 
 
 ## Prepare to work with Redis 
