@@ -11,7 +11,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.4.3.RELEASE</version>
-        <relativePath />
+        <relativePath/>
         <!-- lookup parent from repository -->
     </parent>
     <properties>
@@ -29,7 +29,7 @@
         <docker.registryUrl>https://index.docker.io/v1/</docker.registryUrl>
 
         <dropwizard-metrics.version>3.1.2</dropwizard-metrics.version>
-        <logbook-spring-boot-starter>1.1.0</logbook-spring-boot-starter>
+        <logbook-spring-boot-starter>2.0.0</logbook-spring-boot-starter>
         <io-prometheus-simpleclient.version>0.0.18</io-prometheus-simpleclient.version>
         
         <spring.version>4.3.5.RELEASE</spring.version>
