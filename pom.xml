@@ -32,7 +32,7 @@
         <logbook-spring-boot-starter>1.1.0</logbook-spring-boot-starter>
         <io-prometheus-simpleclient.version>0.0.18</io-prometheus-simpleclient.version>
         
-        <spring.version>4.3.5.RELEASE</spring.version>
+        <spring.version>4.3.29.RELEASE</spring.version>
         <spring-data.version>Ingalls-RC1</spring-data.version>
         <aws-java-sdk.version>1.11.74</aws-java-sdk.version>
         <spring-cloud-starter-parent.version>Camden.SR3</spring-cloud-starter-parent.version>
